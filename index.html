@@ -22,10 +22,10 @@
   *{ box-sizing: border-box; margin:0; padding:0; }
 
   body{
-    background-color: #f8f9fa; /* Fondo gris ultra claro, limpio y profesional */
+    background-color: #f8f9fa;
     font-family: 'Work Sans', 'Segoe UI', sans-serif;
     color: #333;
-    padding-top: 100px; /* Compensación para el header fijo */
+    padding-top: 100px;
   }  
 
   h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 600; letter-spacing: -0.01em; }
@@ -39,7 +39,7 @@
     text-transform: uppercase;
   }
 
-  /* ---------- HEADER DINÁMICO ---------- */
+  /* ---------- HEADER ---------- */
   header {
     position: fixed;
     top: 0;
@@ -56,16 +56,16 @@
     padding: 1.2rem 2rem;
     max-width: 100%;
     margin: 0 auto;
-    
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
   }
 
-  /* Marca y Logo iniciales */
   .brand{
     display: flex;
     align-items: center;
     gap: 0.7rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Mantenemos una transición suave para que el movimiento no dé tirones */
+    transition: transform 0.1s linear, opacity 0.1s linear;
+    will-change: transform, opacity;
   }
 
   .brand img{
@@ -73,7 +73,8 @@
     height: 44px;
     border-radius: 50%;
     flex-shrink: 0;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.1s linear;
+    will-change: transform;
   }
 
   .brand-name{ 
@@ -81,27 +82,11 @@
     font-weight: 700; 
     font-size: 1.2rem; 
     color: var(--navy); 
-    transition: opacity 0.3s ease;
+    white-space: nowrap;
   }
 
   nav{ display: flex; gap: 1.8rem; align-items: center; }
   nav a{ text-decoration: none; font-size: 0.92rem; font-weight: 500; color: var(--navy); }
-
-  /* --- CABECERA Y LOGO EN SCROLL --- */
-  header.scrolled {
-    padding: 0.6rem 2rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    flex-direction: row-reverse; /* Envía el logo hacia la derecha */
-  }
-
-  header.scrolled .brand img {
-    width: 32px;
-    height: 32px;
-  }
-
-  header.scrolled .brand-name {
-    display: none; /* Oculta el texto en scroll para dar más protagonismo al logo minimalista */
-  }
 
   /* ---------- HERO ---------- */
   .hero{
@@ -211,10 +196,9 @@
     background: #fff;
     border-radius: 4px;
     padding: 2rem;
-    border-left: 6px solid var(--line-grey);
+    border-left: 6px solid var(--gold);
     box-shadow: 0 1px 3px rgba(20,33,61,0.08);
   }
-  .card{ border-left-color: var(--gold); }
   .card .label{ color: var(--gold); }
   .card h3{ margin: 0.5rem 0 0.6rem; font-size: 1.4rem; color: var(--navy); }
   .card p{ font-size: 0.96rem; color: #4A4E58; }
@@ -232,7 +216,6 @@
   @media (max-width: 720px){
     body { padding-top: 140px; }
     header{ flex-direction: column; gap: 0.8rem; align-items: center; }
-    header.scrolled { flex-direction: row-reverse; }
     nav{ gap: 1rem; flex-wrap: wrap; justify-content: center; }
     .sections{ grid-template-columns: 1fr; }
     .hero{ grid-template-columns: 1fr; padding: 2rem 1.2rem; }
@@ -244,9 +227,9 @@
 <body>
 
 <header id="main-header">
-  <div class="brand">
-    <img src="logo.png" alt="Londres a tu Gusto">
-    <span class="brand-name">Londres a tu Gusto</span>
+  <div class="brand" id="brand-logo">
+    <img src="logo.png" alt="Londres a tu Gusto" id="logo-img">
+    <span class="brand-name" id="brand-text">Londres a tu Gusto</span>
   </div>
   <nav>
     <a href="#guia">Guía</a>
@@ -316,13 +299,37 @@
 </footer>
 
 <script>
-  // Detecta el desplazamiento (scroll) para mover el logo arriba a la derecha
+  const logoImg = document.getElementById('logo-img');
+  const brandText = document.getElementById('brand-text');
+  const brandLogo = document.getElementById('brand-logo');
+  const nav = document.querySelector('nav');
+
   window.addEventListener('scroll', function() {
-    const header = document.getElementById('main-header');
-    if (window.scrollY > 60) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
+    const scrollY = window.scrollY;
+    const maxScroll = 200; // Píxeles de bajada necesarios para completar la transición
+    
+    // Calcula un progreso entre 0 (arriba del todo) y 1 (completamente bajado)
+    let progress = Math.min(scrollY / maxScroll, 1);
+
+    // 1. Reduce el logo progresivamente de escala 1.0 a 0.75
+    const scale = 1 - (progress * 0.25);
+    logoImg.style.transform = `scale(${scale})`;
+
+    // 2. Desvanece el texto del logo ("Londres a tu Gusto") a medida que se baja
+    brandText.style.opacity = 1 - progress;
+
+    // 3. Mueve el logo paulatinamente hacia la derecha
+    // Se desplaza en función del ancho sobrante en la cabecera
+    if (window.innerWidth > 720) {
+      const headerWidth = document.getElementById('main-header').offsetWidth;
+      const navWidth = nav.offsetWidth;
+      const logoWidth = brandLogo.offsetWidth;
+      
+      // Distancia a la derecha justo antes de chocar con el menú de navegación
+      const maxMoveRight = headerWidth - navWidth - logoWidth - 60; 
+      const moveX = progress * maxMoveRight;
+      
+      brandLogo.style.transform = `translateX(${moveX}px)`;
     }
   });
 </script>
