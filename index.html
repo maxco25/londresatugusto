@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rumbo a Londres — Planifica tu viaje</title>
+<title>Londres a tu Gusto — Planifica tu viaje</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper: #EFECE4;
-    --paper-dark: #E4E0D4;
-    --ink: #1B1F2A;
-    --navy: #14213D;
-    --central-red: #DC241F;
-    --district-green: #00782A;
-    --piccadilly-blue: #0019A8;
-    --circle-gold: #FFCD00;
-    --line-grey: #9C9C94;
+    --paper: #F4F0E4;
+    --paper-dark: #E9E2CC;
+    --ink: #1A2238;
+    --navy: #101A33;
+    --navy-deep: #0B1226;
+    --gold: #C7A542;
+    --gold-bright: #E4C465;
+    --moonlight: #DCE3EE;
+    --line-grey: #A39B7F;
   }
 
   *{ box-sizing: border-box; margin:0; padding:0; }
@@ -52,46 +52,60 @@
   .brand{
     display:flex;
     align-items:center;
-    gap: 0.6rem;
+    gap: 0.7rem;
   }
-  .roundel{
-    width: 30px; height: 30px;
+  .brand img{
+    width: 44px; height: 44px;
     border-radius: 50%;
-    border: 4px solid var(--central-red);
-    position: relative;
     flex-shrink:0;
   }
-  .roundel::after{
-    content:"";
-    position:absolute;
-    left: -6px; right:-6px;
-    top: 50%; transform: translateY(-50%);
-    height: 4px;
-    background: var(--navy);
-  }
-  .brand-name{ font-family:'Fraunces', serif; font-weight:700; font-size:1.15rem; }
+  .brand-name{ font-family:'Fraunces', serif; font-weight:700; font-size:1.2rem; color: var(--navy); }
   nav{ display:flex; gap: 1.8rem; }
   nav a{ text-decoration:none; font-size:0.92rem; font-weight:500; color: var(--navy); }
 
   /* ---------- HERO ---------- */
   .hero{
     max-width: 1200px;
-    margin: 2.5rem auto 0;
-    padding: 0 2rem;
+    margin: 0 auto;
+    padding: 3rem 2rem 2rem;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    background: var(--navy);
+    border-radius: 8px;
     position: relative;
+    overflow: hidden;
   }
-  .hero-eyebrow{ color: var(--central-red); margin-bottom: 1rem; }
+  .hero::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: radial-gradient(circle at 85% 20%, rgba(199,165,66,0.16), transparent 55%);
+    pointer-events:none;
+  }
+  .hero-text{ padding: 1.5rem 0 1.5rem 1.5rem; position:relative; z-index:1; }
+  .hero-eyebrow{ color: var(--gold-bright); margin-bottom: 1rem; }
   .hero h1{
-    font-size: clamp(2.6rem, 6vw, 4.6rem);
-    line-height: 1.02;
-    max-width: 14ch;
-    color: var(--navy);
+    font-size: clamp(2.4rem, 4.6vw, 3.6rem);
+    line-height: 1.05;
+    color: var(--moonlight);
   }
   .hero p.sub{
-    max-width: 46ch;
-    margin-top: 1.4rem;
-    font-size: 1.1rem;
-    color: #3A3E48;
+    max-width: 42ch;
+    margin-top: 1.3rem;
+    font-size: 1.05rem;
+    color: #B9C2D6;
+  }
+  .hero-logo{
+    display:flex;
+    justify-content:center;
+    position:relative;
+    z-index:1;
+  }
+  .hero-logo img{
+    width: min(260px, 80%);
+    filter: drop-shadow(0 12px 28px rgba(0,0,0,0.45));
   }
 
   /* ---------- TUBE LINE NAV ---------- */
@@ -131,14 +145,10 @@
     width: 22px; height: 22px;
     border-radius: 50%;
     background: var(--paper);
-    border: 6px solid var(--navy);
+    border: 6px solid var(--gold);
     transition: transform 0.2s ease, border-color 0.2s ease;
   }
-  .station:hover .dot{ transform: scale(1.15); }
-  .station:nth-child(1) .dot{ border-color: var(--central-red); }
-  .station:nth-child(2) .dot{ border-color: var(--district-green); }
-  .station:nth-child(3) .dot{ border-color: var(--piccadilly-blue); }
-  .station:nth-child(4) .dot{ border-color: var(--circle-gold); }
+  .station:hover .dot{ transform: scale(1.15); border-color: var(--navy); }
   .station .stop-label{
     margin-top: 0.7rem;
     font-family:'IBM Plex Mono', monospace;
@@ -164,11 +174,8 @@
     border-left: 6px solid var(--line-grey);
     box-shadow: 0 1px 3px rgba(20,33,61,0.08);
   }
-  .card:nth-child(1){ border-left-color: var(--central-red); }
-  .card:nth-child(2){ border-left-color: var(--district-green); }
-  .card:nth-child(3){ border-left-color: var(--piccadilly-blue); }
-  .card:nth-child(4){ border-left-color: var(--circle-gold); }
-  .card .label{ color: var(--line-grey); }
+  .card{ border-left-color: var(--gold); }
+  .card .label{ color: var(--gold); }
   .card h3{ margin: 0.5rem 0 0.6rem; font-size: 1.4rem; color: var(--navy); }
   .card p{ font-size: 0.96rem; color: #4A4E58; }
 
@@ -186,6 +193,9 @@
     header{ flex-direction:column; gap:1rem; align-items:flex-start; }
     nav{ gap:1rem; flex-wrap:wrap; }
     .sections{ grid-template-columns: 1fr; }
+    .hero{ grid-template-columns: 1fr; padding: 2rem 1.2rem; }
+    .hero-text{ padding-left:0; order:2; }
+    .hero-logo{ order:1; }
   }
 </style>
 </head>
@@ -193,8 +203,8 @@
 
 <header>
   <div class="brand">
-    <div class="roundel"></div>
-    <span class="brand-name">Rumbo a Londres</span>
+    <img src="logo.png" alt="Londres a tu Gusto">
+    <span class="brand-name">Londres a tu Gusto</span>
   </div>
   <nav>
     <a href="#guia">Guía</a>
@@ -205,9 +215,14 @@
 </header>
 
 <section class="hero">
-  <div class="hero-eyebrow label">Mind the gap · Planificación de viajes</div>
-  <h1>Tu viaje a Londres, línea por línea.</h1>
-  <p class="sub">Todo lo que necesitas para organizar tu visita: qué ver, cuánto cuesta, cuántos días dedicarle y cómo moverte — sin perderte entre tanta información.</p>
+  <div class="hero-text">
+    <div class="hero-eyebrow label">Mind the gap · Planificación de viajes</div>
+    <h1>Tu viaje a Londres, a tu gusto.</h1>
+    <p class="sub">Todo lo que necesitas para organizar tu visita: qué ver, cuánto cuesta, cuántos días dedicarle y cómo moverte — sin perderte entre tanta información.</p>
+  </div>
+  <div class="hero-logo">
+    <img src="logo.png" alt="Londres a tu Gusto">
+  </div>
 </section>
 
 <div class="line-map" aria-label="Navegación por secciones en forma de línea de metro">
@@ -255,7 +270,7 @@
 </div>
 
 <footer>
-  Rumbo a Londres — proyecto personal en construcción
+  Londres a tu Gusto — proyecto personal en construcción
 </footer>
 
 </body>
