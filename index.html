@@ -22,10 +22,10 @@
   *{ box-sizing: border-box; margin:0; padding:0; }
 
   body{
-    background-color: #f8f9fa;
+    background-color: #f8f9fa; /* Fondo gris claro impecable */
     font-family: 'Work Sans', 'Segoe UI', sans-serif;
     color: #333;
-    padding-top: 100px;
+    padding-top: 90px; /* Compensación fija para el menú superior */
   }  
 
   h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 600; letter-spacing: -0.01em; }
@@ -39,7 +39,7 @@
     text-transform: uppercase;
   }
 
-  /* ---------- HEADER FIJO ---------- */
+  /* ---------- HEADER FIJO LIMPIO ---------- */
   header {
     position: fixed;
     top: 0;
@@ -48,24 +48,31 @@
     z-index: 1000;
     background-color: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.2rem 2rem;
-    max-width: 100%;
-    margin: 0 auto;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
     box-shadow: 0 2px 10px rgba(0,0,0,0.03);
   }
 
-  /* Hueco reservado en la cabecera para cuando llegue el logo */
-  .header-brand-placeholder {
+  .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .brand{
     display: flex;
     align-items: center;
     gap: 0.7rem;
-    width: 200px; /* Mantiene el espacio reservado */
-    height: 44px;
+    text-decoration: none;
+  }
+
+  .brand img{
+    width: 40px; 
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
 
   .brand-name{ 
@@ -73,11 +80,11 @@
     font-weight: 700; 
     font-size: 1.2rem; 
     color: var(--navy); 
-    white-space: nowrap;
   }
 
   nav{ display: flex; gap: 1.8rem; align-items: center; }
-  nav a{ text-decoration: none; font-size: 0.92rem; font-weight: 500; color: var(--navy); }
+  nav a{ text-decoration: none; font-size: 0.92rem; font-weight: 500; color: var(--navy); transition: color 0.2s; }
+  nav a:hover{ color: var(--gold); }
 
   /* ---------- HERO ---------- */
   .hero{
@@ -91,6 +98,7 @@
     background: var(--navy);
     border-radius: 8px;
     position: relative;
+    overflow: hidden;
   }
   .hero::before{
     content:"";
@@ -113,21 +121,17 @@
     color: #B9C2D6;
   }
 
-  /* LOGO QUE VIAJARÁ (HERO LOGO) */
   .hero-logo{
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    z-index: 1001; /* Siempre visible por encima */
+    z-index: 1;
   }
 
   .hero-logo img{
     width: min(260px, 80%);
     filter: drop-shadow(0 12px 28px rgba(0,0,0,0.45));
-    /* Posicionamiento fijo dinámico con JS */
-    transform-origin: center center;
-    will-change: transform, position, top, left;
   }
 
   /* ---------- TUBE LINE NAV ---------- */
@@ -211,8 +215,8 @@
   }
 
   @media (max-width: 720px){
-    body { padding-top: 140px; }
-    header{ flex-direction: column; gap: 0.8rem; align-items: flex-start; }
+    body { padding-top: 130px; }
+    .header-container{ flex-direction: column; gap: 0.8rem; align-items: flex-start; }
     nav{ gap: 1rem; flex-wrap: wrap; }
     .sections{ grid-template-columns: 1fr; }
     .hero{ grid-template-columns: 1fr; padding: 2rem 1.2rem; }
@@ -223,16 +227,19 @@
 </head>
 <body>
 
-<header id="main-header">
-  <div class="header-brand-placeholder" id="target-spot">
-    <span class="brand-name">Londres a tu Gusto</span>
+<header>
+  <div class="header-container">
+    <a href="#" class="brand">
+      <img src="logo.png" alt="Londres a tu Gusto">
+      <span class="brand-name">Londres a tu Gusto</span>
+    </a>
+    <nav>
+      <a href="#guia">Guía</a>
+      <a href="#itinerarios">Itinerarios</a>
+      <a href="#presupuesto">Presupuesto</a>
+      <a href="#logistica">Logística</a>
+    </nav>
   </div>
-  <nav>
-    <a href="#guia">Guía</a>
-    <a href="#itinerarios">Itinerarios</a>
-    <a href="#presupuesto">Presupuesto</a>
-    <a href="#logistica">Logística</a>
-  </nav>
 </header>
 
 <section class="hero">
@@ -241,9 +248,8 @@
     <h1>Tu viaje a Londres, a tu gusto.</h1>
     <p class="sub">Todo lo que necesitas para organizar tu visita: qué ver, cuánto cuesta, cuántos días dedicarle y cómo moverte — sin perderte entre tanta información.</p>
   </div>
-  <div class="hero-logo" id="hero-logo-container">
-    <!-- Este es el único logo que se encogerá y viajará arriba a la izquierda -->
-    <img src="logo.png" alt="Londres a tu Gusto" id="traveling-logo">
+  <div class="hero-logo">
+    <img src="logo.png" alt="Londres a tu Gusto">
   </div>
 </section>
 
@@ -294,50 +300,6 @@
 <footer>
   Londres a tu Gusto — proyecto personal en construcción
 </footer>
-
-<script>
-  const logo = document.getElementById('traveling-logo');
-  const targetSpot = document.getElementById('target-spot');
-  const heroContainer = document.getElementById('hero-logo-container');
-
-  function updateLogoPosition() {
-    const scrollY = window.scrollY;
-    const maxScroll = 250; // Distancia de scroll para completar el viaje
-    const progress = Math.min(scrollY / maxScroll, 1);
-
-    if (window.innerWidth > 720) {
-      // Coordenadas del destino (Header arriba a la izquierda)
-      const targetRect = targetSpot.getBoundingClientRect();
-      // Coordenadas iniciales (Centro de la Hero)
-      const heroRect = heroContainer.getBoundingClientRect();
-
-      // Distancia a recorrer
-      const deltaX = (targetRect.left - heroRect.left);
-      const deltaY = (targetRect.top - heroRect.top);
-
-      // Tamaño inicial vs final (De 240px a 44px)
-      const scale = 1 - (progress * 0.8); // Se encoge paulatinamente
-
-      // Aplicamos la aceleración y traslado en tiempo real
-      logo.style.transform = `translate(${deltaX * progress}px, ${deltaY * progress}px) scale(${scale})`;
-      logo.style.position = progress > 0 ? 'fixed' : 'relative';
-      
-      if (progress > 0) {
-        logo.style.top = `${heroRect.top}px`;
-        logo.style.left = `${heroRect.left}px`;
-      } else {
-        logo.style.top = 'auto';
-        logo.style.left = 'auto';
-      }
-    } else {
-      logo.style.transform = 'none';
-      logo.style.position = 'relative';
-    }
-  }
-
-  window.addEventListener('scroll', updateLogoPosition);
-  window.addEventListener('resize', updateLogoPosition);
-</script>
 
 </body>
 </html>
