@@ -39,7 +39,7 @@
     text-transform: uppercase;
   }
 
-  /* ---------- HEADER ---------- */
+  /* ---------- HEADER FIJO ---------- */
   header {
     position: fixed;
     top: 0;
@@ -59,22 +59,13 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.03);
   }
 
-  .brand{
+  /* Hueco reservado en la cabecera para cuando llegue el logo */
+  .header-brand-placeholder {
     display: flex;
     align-items: center;
     gap: 0.7rem;
-    /* Mantenemos una transición suave para que el movimiento no dé tirones */
-    transition: transform 0.1s linear, opacity 0.1s linear;
-    will-change: transform, opacity;
-  }
-
-  .brand img{
-    width: 44px; 
+    width: 200px; /* Mantiene el espacio reservado */
     height: 44px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    transition: transform 0.1s linear;
-    will-change: transform;
   }
 
   .brand-name{ 
@@ -100,7 +91,6 @@
     background: var(--navy);
     border-radius: 8px;
     position: relative;
-    overflow: hidden;
   }
   .hero::before{
     content:"";
@@ -122,15 +112,22 @@
     font-size: 1.05rem;
     color: #B9C2D6;
   }
+
+  /* LOGO QUE VIAJARÁ (HERO LOGO) */
   .hero-logo{
-    display:flex;
-    justify-content:center;
-    position:relative;
-    z-index:1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1001; /* Siempre visible por encima */
   }
+
   .hero-logo img{
     width: min(260px, 80%);
     filter: drop-shadow(0 12px 28px rgba(0,0,0,0.45));
+    /* Posicionamiento fijo dinámico con JS */
+    transform-origin: center center;
+    will-change: transform, position, top, left;
   }
 
   /* ---------- TUBE LINE NAV ---------- */
@@ -215,8 +212,8 @@
 
   @media (max-width: 720px){
     body { padding-top: 140px; }
-    header{ flex-direction: column; gap: 0.8rem; align-items: center; }
-    nav{ gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    header{ flex-direction: column; gap: 0.8rem; align-items: flex-start; }
+    nav{ gap: 1rem; flex-wrap: wrap; }
     .sections{ grid-template-columns: 1fr; }
     .hero{ grid-template-columns: 1fr; padding: 2rem 1.2rem; }
     .hero-text{ padding-left:0; order:2; }
@@ -227,9 +224,8 @@
 <body>
 
 <header id="main-header">
-  <div class="brand" id="brand-logo">
-    <img src="logo.png" alt="Londres a tu Gusto" id="logo-img">
-    <span class="brand-name" id="brand-text">Londres a tu Gusto</span>
+  <div class="header-brand-placeholder" id="target-spot">
+    <span class="brand-name">Londres a tu Gusto</span>
   </div>
   <nav>
     <a href="#guia">Guía</a>
@@ -245,8 +241,9 @@
     <h1>Tu viaje a Londres, a tu gusto.</h1>
     <p class="sub">Todo lo que necesitas para organizar tu visita: qué ver, cuánto cuesta, cuántos días dedicarle y cómo moverte — sin perderte entre tanta información.</p>
   </div>
-  <div class="hero-logo">
-    <img src="logo.png" alt="Londres a tu Gusto">
+  <div class="hero-logo" id="hero-logo-container">
+    <!-- Este es el único logo que se encogerá y viajará arriba a la izquierda -->
+    <img src="logo.png" alt="Londres a tu Gusto" id="traveling-logo">
   </div>
 </section>
 
@@ -299,39 +296,47 @@
 </footer>
 
 <script>
-  const logoImg = document.getElementById('logo-img');
-  const brandText = document.getElementById('brand-text');
-  const brandLogo = document.getElementById('brand-logo');
-  const nav = document.querySelector('nav');
+  const logo = document.getElementById('traveling-logo');
+  const targetSpot = document.getElementById('target-spot');
+  const heroContainer = document.getElementById('hero-logo-container');
 
-  window.addEventListener('scroll', function() {
+  function updateLogoPosition() {
     const scrollY = window.scrollY;
-    const maxScroll = 200; // Píxeles de bajada necesarios para completar la transición
-    
-    // Calcula un progreso entre 0 (arriba del todo) y 1 (completamente bajado)
-    let progress = Math.min(scrollY / maxScroll, 1);
+    const maxScroll = 250; // Distancia de scroll para completar el viaje
+    const progress = Math.min(scrollY / maxScroll, 1);
 
-    // 1. Reduce el logo progresivamente de escala 1.0 a 0.75
-    const scale = 1 - (progress * 0.25);
-    logoImg.style.transform = `scale(${scale})`;
-
-    // 2. Desvanece el texto del logo ("Londres a tu Gusto") a medida que se baja
-    brandText.style.opacity = 1 - progress;
-
-    // 3. Mueve el logo paulatinamente hacia la derecha
-    // Se desplaza en función del ancho sobrante en la cabecera
     if (window.innerWidth > 720) {
-      const headerWidth = document.getElementById('main-header').offsetWidth;
-      const navWidth = nav.offsetWidth;
-      const logoWidth = brandLogo.offsetWidth;
+      // Coordenadas del destino (Header arriba a la izquierda)
+      const targetRect = targetSpot.getBoundingClientRect();
+      // Coordenadas iniciales (Centro de la Hero)
+      const heroRect = heroContainer.getBoundingClientRect();
+
+      // Distancia a recorrer
+      const deltaX = (targetRect.left - heroRect.left);
+      const deltaY = (targetRect.top - heroRect.top);
+
+      // Tamaño inicial vs final (De 240px a 44px)
+      const scale = 1 - (progress * 0.8); // Se encoge paulatinamente
+
+      // Aplicamos la aceleración y traslado en tiempo real
+      logo.style.transform = `translate(${deltaX * progress}px, ${deltaY * progress}px) scale(${scale})`;
+      logo.style.position = progress > 0 ? 'fixed' : 'relative';
       
-      // Distancia a la derecha justo antes de chocar con el menú de navegación
-      const maxMoveRight = headerWidth - navWidth - logoWidth - 60; 
-      const moveX = progress * maxMoveRight;
-      
-      brandLogo.style.transform = `translateX(${moveX}px)`;
+      if (progress > 0) {
+        logo.style.top = `${heroRect.top}px`;
+        logo.style.left = `${heroRect.left}px`;
+      } else {
+        logo.style.top = 'auto';
+        logo.style.left = 'auto';
+      }
+    } else {
+      logo.style.transform = 'none';
+      logo.style.position = 'relative';
     }
-  });
+  }
+
+  window.addEventListener('scroll', updateLogoPosition);
+  window.addEventListener('resize', updateLogoPosition);
 </script>
 
 </body>
