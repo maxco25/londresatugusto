@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rumbo a Londres — Planifica tu viaje</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #EFECE4;
+    --paper-dark: #E4E0D4;
+    --ink: #1B1F2A;
+    --navy: #14213D;
+    --central-red: #DC241F;
+    --district-green: #00782A;
+    --piccadilly-blue: #0019A8;
+    --circle-gold: #FFCD00;
+    --line-grey: #9C9C94;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Work Sans', sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 600; letter-spacing: -0.01em; }
+
+  a { color: inherit; }
+
+  .label{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap: 0.6rem;
+  }
+  .roundel{
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 4px solid var(--central-red);
+    position: relative;
+    flex-shrink:0;
+  }
+  .roundel::after{
+    content:"";
+    position:absolute;
+    left: -6px; right:-6px;
+    top: 50%; transform: translateY(-50%);
+    height: 4px;
+    background: var(--navy);
+  }
+  .brand-name{ font-family:'Fraunces', serif; font-weight:700; font-size:1.15rem; }
+  nav{ display:flex; gap: 1.8rem; }
+  nav a{ text-decoration:none; font-size:0.92rem; font-weight:500; color: var(--navy); }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    max-width: 1200px;
+    margin: 2.5rem auto 0;
+    padding: 0 2rem;
+    position: relative;
+  }
+  .hero-eyebrow{ color: var(--central-red); margin-bottom: 1rem; }
+  .hero h1{
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    line-height: 1.02;
+    max-width: 14ch;
+    color: var(--navy);
+  }
+  .hero p.sub{
+    max-width: 46ch;
+    margin-top: 1.4rem;
+    font-size: 1.1rem;
+    color: #3A3E48;
+  }
+
+  /* ---------- TUBE LINE NAV ---------- */
+  .line-map{
+    margin: 4rem auto 3rem;
+    max-width: 1200px;
+    padding: 0 2rem;
+    overflow-x: auto;
+  }
+  .line-track{
+    position: relative;
+    display:flex;
+    align-items:center;
+    min-width: 640px;
+    height: 90px;
+  }
+  .line-track::before{
+    content:"";
+    position:absolute;
+    left:0; right:0; top:50%;
+    height: 6px;
+    background: var(--navy);
+    transform: translateY(-50%);
+    border-radius: 3px;
+  }
+  .station{
+    position:relative;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-decoration:none;
+    color: var(--ink);
+    z-index:1;
+  }
+  .station .dot{
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 6px solid var(--navy);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .station:hover .dot{ transform: scale(1.15); }
+  .station:nth-child(1) .dot{ border-color: var(--central-red); }
+  .station:nth-child(2) .dot{ border-color: var(--district-green); }
+  .station:nth-child(3) .dot{ border-color: var(--piccadilly-blue); }
+  .station:nth-child(4) .dot{ border-color: var(--circle-gold); }
+  .station .stop-label{
+    margin-top: 0.7rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-align:center;
+    white-space: nowrap;
+  }
+
+  /* ---------- SECTION CARDS ---------- */
+  .sections{
+    max-width: 1200px;
+    margin: 2rem auto 5rem;
+    padding: 0 2rem;
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.4rem;
+  }
+  .card{
+    background: #fff;
+    border-radius: 4px;
+    padding: 2rem;
+    border-left: 6px solid var(--line-grey);
+    box-shadow: 0 1px 3px rgba(20,33,61,0.08);
+  }
+  .card:nth-child(1){ border-left-color: var(--central-red); }
+  .card:nth-child(2){ border-left-color: var(--district-green); }
+  .card:nth-child(3){ border-left-color: var(--piccadilly-blue); }
+  .card:nth-child(4){ border-left-color: var(--circle-gold); }
+  .card .label{ color: var(--line-grey); }
+  .card h3{ margin: 0.5rem 0 0.6rem; font-size: 1.4rem; color: var(--navy); }
+  .card p{ font-size: 0.96rem; color: #4A4E58; }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    border-top: 1px solid #D8D3C4;
+    padding: 2rem;
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: #6B6F78;
+  }
+
+  @media (max-width: 720px){
+    header{ flex-direction:column; gap:1rem; align-items:flex-start; }
+    nav{ gap:1rem; flex-wrap:wrap; }
+    .sections{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="roundel"></div>
+    <span class="brand-name">Rumbo a Londres</span>
+  </div>
+  <nav>
+    <a href="#guia">Guía</a>
+    <a href="#itinerarios">Itinerarios</a>
+    <a href="#presupuesto">Presupuesto</a>
+    <a href="#logistica">Logística</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow label">Mind the gap · Planificación de viajes</div>
+  <h1>Tu viaje a Londres, línea por línea.</h1>
+  <p class="sub">Todo lo que necesitas para organizar tu visita: qué ver, cuánto cuesta, cuántos días dedicarle y cómo moverte — sin perderte entre tanta información.</p>
+</section>
+
+<div class="line-map" aria-label="Navegación por secciones en forma de línea de metro">
+  <div class="line-track">
+    <a href="#guia" class="station">
+      <span class="dot"></span>
+      <span class="stop-label">Guía</span>
+    </a>
+    <a href="#itinerarios" class="station">
+      <span class="dot"></span>
+      <span class="stop-label">Itinerarios</span>
+    </a>
+    <a href="#presupuesto" class="station">
+      <span class="dot"></span>
+      <span class="stop-label">Presupuesto</span>
+    </a>
+    <a href="#logistica" class="station">
+      <span class="dot"></span>
+      <span class="stop-label">Logística</span>
+    </a>
+  </div>
+</div>
+
+<div class="sections">
+  <div class="card" id="guia">
+    <div class="label">Central Line</div>
+    <h3>Guía por barrios</h3>
+    <p>Descubre qué zonas visitar según tus intereses: historia en Westminster, arte en South Bank, ambiente local en Shoreditch o Notting Hill.</p>
+  </div>
+  <div class="card" id="itinerarios">
+    <div class="label">District Line</div>
+    <h3>Itinerarios por días</h3>
+    <p>Rutas pensadas para 3, 5 o 7 días, organizadas para aprovechar el tiempo y minimizar desplazamientos entre lugares.</p>
+  </div>
+  <div class="card" id="presupuesto">
+    <div class="label">Piccadilly Line</div>
+    <h3>Presupuesto</h3>
+    <p>Estimaciones realistas de gasto diario: alojamiento, comida, transporte y entradas, con opciones para distintos bolsillos.</p>
+  </div>
+  <div class="card" id="logistica">
+    <div class="label">Circle Line</div>
+    <h3>Logística y transporte</h3>
+    <p>Cómo moverte por la ciudad, tarjeta Oyster, aeropuertos y consejos prácticos antes de aterrizar.</p>
+  </div>
+</div>
+
+<footer>
+  Rumbo a Londres — proyecto personal en construcción
+</footer>
+
+</body>
+</html>
